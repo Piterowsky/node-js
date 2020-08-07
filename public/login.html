@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Title</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
+        <style>
+            .form-group {
+                display: grid;
+                grid-gap: 10px;
+            }
+
+            .input-group {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .container {
+                height: 100vh;
+            }
+
+            .jumbotron {
+                width: 50%;
+                position: relative;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="jumbotron">
+                <h1 class="text-center text-success">Login</h1>
+                <form action="auth" method="post">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <label for="login">Login</label>
+                            <br />
+                            <input id="login" type="text" name="username" />
+                        </div>
+                        <div class="input-group">
+                            <label for="password">Password</label>
+                            <br />
+                            <input id="password" type="password" name="password" />
+                        </div>
+                        <input type="submit" class="btn btn-success" />
+                        <button id="registerButton" class="btn btn-secondary" onclick="">Register</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            document.querySelector('#registerButton').addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = 'registration.html';
+            });
+        </script>
+    </body>
+</html>

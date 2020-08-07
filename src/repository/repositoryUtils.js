@@ -8,16 +8,15 @@ const client = new Client({
     port: process.env.DB_PORT,
 });
 
+client.connect();
+
 async function executeQuery(query) {
-    client.connect();
     try {
-        const {rows} = await client.query(query);
+        const { rows } = await client.query(query);
         return rows;
     } catch (err) {
         console.log(err.stack);
-    } finally {
-        client.end();
     }
 }
 
-module.exports = {executeQuery};
+module.exports = { executeQuery };

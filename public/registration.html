@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
+        <title>Registration</title>
+        <style>
+            .form-group {
+                display: grid;
+                grid-gap: 10px;
+            }
+
+            .input-group {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .container {
+                height: 100vh;
+            }
+
+            .jumbotron {
+                width: 50%;
+                position: relative;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="jumbotron">
+                <h1 class="text-center text-success">Registration</h1>
+                <form action="register" method="post">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <label for="login">Login</label>
+                            <br />
+                            <input id="login" type="text" name="username" />
+                        </div>
+                        <div class="input-group">
+                            <label for="password">Password</label>
+                            <br />
+                            <input id="password" type="password" name="password" />
+                        </div>
+                        <div class="input-group">
+                            <label for="password-repeat">Repeat password</label>
+                            <br />
+                            <input id="password-repeat" type="password" name="passwordRepeat" />
+                        </div>
+                        <input type="submit" class="btn btn-success" value="Register" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
