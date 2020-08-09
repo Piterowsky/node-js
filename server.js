@@ -17,18 +17,15 @@ app.use(
         saveUninitialized: true,
     })
 );
+
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(AuthRouter);
 app.use(ViewRouter);
-app.get('/', (req, res) => {
-    if (req.session.loggedin) {
-        res.redirect('/home');
-    } else {
-        res.redirect('/login');
-    }
-});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server is listening on port: ${port}`);

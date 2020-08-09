@@ -3,30 +3,13 @@
     <head>
         <meta charset="UTF-8" />
         <title>Title</title>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <meta
+            name="google-signin-client_id"
+            content="216494072492-cr7jbjlmip6fu8n7j4sm2f4l7com7tu8.apps.googleusercontent.com"
+        />
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
-        <style>
-            .form-group {
-                display: grid;
-                grid-gap: 10px;
-            }
-
-            .input-group {
-                display: flex;
-                flex-direction: column;
-            }
-
-            .container {
-                height: 100vh;
-            }
-
-            .jumbotron {
-                width: 50%;
-                position: relative;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-            }
-        </style>
+        <link rel="stylesheet" href="main.css">
     </head>
     <body>
         <div class="container">
@@ -35,17 +18,18 @@
                 <form action="auth" method="post">
                     <div class="form-group">
                         <div class="input-group">
-                            <label for="login">Login</label>
+                            <label for="username">Username</label>
                             <br />
-                            <input id="login" type="text" name="username" />
+                            <input id="username" type="text" name="username" />
                         </div>
                         <div class="input-group">
                             <label for="password">Password</label>
                             <br />
                             <input id="password" type="password" name="password" />
                         </div>
-                        <input type="submit" class="btn btn-success" />
-                        <button id="registerButton" class="btn btn-secondary" onclick="">Register</button>
+                        <input type="submit" class="btn btn-success" value="Login" />
+                        <button id="registerButton" class="btn btn-secondary">Register</button>
+                        <div class="g-signin2" data-onsuccess="onSignIn">Google</div>
                     </div>
                 </form>
             </div>
@@ -56,6 +40,23 @@
                 e.preventDefault();
                 window.location.href = 'registration.html';
             });
+
+            async function onSignIn(googleUser) {
+                const profile = googleUser.getBasicProfile();
+                const body = {
+                    googleId:  profile.getId(),
+                    username: profile.getName(),
+                    email: profile.getEmail(),
+                };
+                await fetch('/googleLogin', {
+                    method: 'POST',
+                    headers: {
+                        "Content-type": "application/json",
+                    },
+                    body: JSON.stringify(body),
+                });
+                window.location.href = '/home';
+            }
         </script>
     </body>
 </html>

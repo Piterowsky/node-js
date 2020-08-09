@@ -1,0 +1,36 @@
+<%- include('header') -%>
+
+<body>
+<div class="container">
+    <div class="jumbotron">
+        <h1>
+            Welcome back, <%= username %> !
+        </h1>
+        <% if(authMethod === 'google') {%>
+            <a class="btn btn-primary" href="/logout" onclick="googleLogOut()">Logout google</a>
+        <% } else  {%>
+            <a class="btn btn-primary" href="/logout">Logout</a>
+        <% }%>
+    </div>
+</div>
+
+
+<script>
+    window.onload = function(){
+        gapi.load('auth2', function() {
+            gapi.auth2.init({
+                client_id: '216494072492-cr7jbjlmip6fu8n7j4sm2f4l7com7tu8.apps.googleusercontent.com'
+            });
+        });
+    }
+
+    function googleLogOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+            console.log('User signed out.');
+        });
+    }
+</script>
+</body>
+
+<%- include('footer') -%>

@@ -52,4 +52,25 @@ router.post('/auth', async (req, res) => {
     }
 });
 
+router.post('/googleLogin', async (req, res) => {
+    const {googleId, username, email} = req.body;
+
+    const result = await userRepository.findByGoogleId(googleId);
+    if(result.length < 1) {
+        const user = await userRepository.save(username, null, email, googleId);
+        console.log(`Saving user: ${JSON.stringify(user)}`);
+    }
+
+    req.session.loggedin = true;
+    req.session.username = username;
+    req.session.authMethod = 'google';
+    req.session.save(() => res.redirect('/home'));
+});
+
+router.get('/logout', (req, res) => {
+    req.session.loggedin = false;
+    req.session.username = '';
+    res.redirect('/');
+});
+
 module.exports = router;

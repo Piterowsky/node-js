@@ -1,0 +1,21 @@
+.form-group {
+    display: grid;
+    grid-gap: 10px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    height: 100vh;
+}
+
+.jumbotron {
+    width: 50%;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

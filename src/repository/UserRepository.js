@@ -16,9 +16,15 @@ class UserRepository {
         return executeQuery(`SELECT * FROM users WHERE username = '${username}';`);
     }
 
-    async save(username, phash) {
+    async findByGoogleId(googleId) {
+        return executeQuery(`SELECT * FROM users WHERE google_id = '${googleId}';`);
+    }
+
+    async save(username, phash, email, googleId) {
         return executeQuery(
-            `INSERT INTO ${USERS_TABLE}(username, phash) VALUES ('${username}', '${phash}') RETURNING *;`
+            `INSERT INTO ${USERS_TABLE}(username, phash, email, google_id) 
+             VALUES ('${username}', '${phash}', '${email}', '${googleId}')
+             RETURNING *;`
         );
     }
 }
