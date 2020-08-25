@@ -1,35 +1,61 @@
 import express from 'express';
 import cors from 'cors';
-import { json, urlencoded } from 'body-parser';
 import morgan from 'morgan';
+import { json, urlencoded } from 'body-parser';
+import UserRouter from './route/UserRouter';
+import connection from './config/connection';
+import { updateSchema } from './util/schemaUtils';
+import Routes from './routes';
+import SwaggerRouter from './route/SwaggerRouter';
 
-const app = express();
+(async function () {
+    await setupDatabase();
 
-app.disable('x-powered-by');
+    const app = setupExpress();
 
-app.use(json());
-app.use(urlencoded({ extended: true }));
-app.use(cors());
-app.use(morgan('dev'));
+    setupMiddlewares(app);
+    setupRoutes(app);
 
-const customMid = (req, res, next) => {
-    if (!req.locals) {
-        req.locals = {
-            counter:  0
-        };
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => console.log(`Server is running on port ${port}`));
+})();
+
+async function setupDatabase() {
+    await testDatabaseConnection();
+    await updateSchema();
+}
+
+function setupRoutes(app) {
+    app.use(Routes.API_USER, UserRouter);
+    app.use(Routes.SWAGGER, SwaggerRouter);
+}
+
+function setupExpress() {
+    const app = express();
+    app.disable('x-powered-by');
+    return app;
+}
+
+function setupMiddlewares(app) {
+    app.use(json());
+    app.use(urlencoded({ extended: true }));
+    app.use(getCors());
+    app.use(morgan('dev'));
+}
+
+async function testDatabaseConnection() {
+    try {
+        await connection.authenticate();
+        console.log('Connection has been established successfully.');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
     }
-    else {
-        req.locals.counter = req.locals.counter + 1;
-    }
-    console.log(req.locals.counter);
-    next();
-};
+}
 
-app.get('/', [customMid, customMid, customMid, customMid], (req, res) => res.send('Hello World'));
-app.post('/', (req, res) => {
-    console.log(req.body);
-    res.status(200).end();
-});
-
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+function getCors() {
+    const whitelist = process.env.CORS_WHITELIST ? process.env.CORS_WHITELIST.split(',') : process.env.CORS_WHITELIST;
+    return cors({
+        origin: whitelist || ['http://localhost', 'https://localhost'],
+        optionsSuccessStatus: 200,
+    });
+}
