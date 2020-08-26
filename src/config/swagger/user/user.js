@@ -45,6 +45,9 @@ export default {
                         },
                     },
                 },
+                '402': {
+                    description: 'User cannot be created',
+                },
             },
         },
     },
@@ -52,7 +55,18 @@ export default {
         get: {
             tags: [tags.API_USER],
             description: 'Get user by id',
-            operationId: 'User.findById',
+            operationId: 'User.findOneById',
+            parameters: [
+                {
+                    name: 'id',
+                    in: 'path',
+                    required: true,
+                    schema: {
+                        type: 'number',
+                        example: 0,
+                    },
+                },
+            ],
             responses: {
                 '200': {
                     description: 'Found user',
@@ -64,12 +78,26 @@ export default {
                         },
                     },
                 },
+                '404': {
+                    description: 'User not found',
+                },
             },
         },
         put: {
             tags: [tags.API_USER],
             description: 'Edit user',
             operationId: 'User.updateOne',
+            parameters: [
+                {
+                    name: 'id',
+                    in: 'path',
+                    required: true,
+                    schema: {
+                        type: 'number',
+                        example: 0,
+                    },
+                },
+            ],
             requestBody: {
                 description: 'Edited user object',
                 required: true,
@@ -92,6 +120,9 @@ export default {
                         },
                     },
                 },
+                '404': {
+                    description: 'User not found',
+                },
             },
         },
         delete: {
@@ -105,9 +136,9 @@ export default {
                     required: true,
                     schema: {
                         type: 'number',
-                        example: 0
-                    }
-                }
+                        example: 0,
+                    },
+                },
             ],
             responses: {
                 '200': {

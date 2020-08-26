@@ -1,7 +1,7 @@
 import connection from '../config/connection';
 
 async function updateSchema() {
-    await connection.sync({ force: process.env.DB_FORCE_UPDATE_SCHEMA });
+    await connection.sync({ force: process.env.DB_FORCE_UPDATE_SCHEMA === 'true' });
 }
 
 export { updateSchema };

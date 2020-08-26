@@ -7,10 +7,10 @@ router.get('/', UserController.findAll);
 
 router.post('/', UserController.saveOne);
 
-router.get('/:id', UserController.findOne);
+router.get('/:id', UserController.findByPk);
 
 router.put('/:id', UserController.updateOne);
 
-router.delete('/:id', UserController.removeOne);
+router.delete('/:id', UserController.deleteOneById);
 
 export default router;

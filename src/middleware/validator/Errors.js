@@ -14,4 +14,5 @@ export default {
     CONTAINS_WHITESPACE_CHARACTER: (fieldName) => `${fieldName} cannot contains any whitespace characters.`,
     INVALID_FORMAT: (fieldName) => `${fieldName} has invalid format.`,
     ALREADY_IN_USE: (fieldName) => `${fieldName} is already in use.`,
+    USER_DOES_NOT_EXIST: (id) => `User with id=${id} does not exist.`,
 };

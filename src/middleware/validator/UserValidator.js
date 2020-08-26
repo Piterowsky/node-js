@@ -1,5 +1,6 @@
 import Errors from './Errors';
-import User from '../../model/UserModel';
+import UserService from '../../service/UserService';
+import user from '../../config/swagger/user/user';
 
 class UserValidator {
     static FIELDS = {
@@ -18,10 +19,10 @@ class UserValidator {
         },
     };
 
-    static async validateUsername(username) {
+    static validateUsername(username) {
         const { FIELD_NAME, MAX, MIN } = UserValidator.FIELDS.USERNAME;
 
-        const noContainSpecialCharactersRegex = /^[A-Z]*$/i;
+        const noContainSpecialCharactersRegex = /^[\w]*$/;
         const startWithLetterRegex = /^[A-Z]/i;
         const containWhitespaceRegex = /\s/i;
 
@@ -39,8 +40,7 @@ class UserValidator {
         if (username.length < MIN) {
             errors.push(Errors.TOO_SHORT(FIELD_NAME, MIN));
         }
-
-        if (username.match(noContainSpecialCharactersRegex)) {
+        if (!username.match(noContainSpecialCharactersRegex)) {
             errors.push(Errors.CONTAINS_SPECIAL_CHARS(FIELD_NAME));
         }
 
@@ -50,15 +50,6 @@ class UserValidator {
 
         if (username.match(containWhitespaceRegex)) {
             errors.push(Errors.CONTAINS_WHITESPACES(FIELD_NAME));
-        }
-
-        const isUsernameAlreadyUsed = await User.findOne({
-            where: {
-                username: username
-            }
-        });
-        if(isUsernameAlreadyUsed) {
-            errors.push(Errors.ALREADY_IN_USE(FIELD_NAME));
         }
 
         return errors;
@@ -100,7 +91,7 @@ class UserValidator {
         return errors;
     }
 
-    static async validateEmail(email) {
+    static validateEmail(email) {
         const { FIELD_NAME } = UserValidator.FIELDS.EMAIL;
 
         const emailFormatRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
@@ -116,28 +107,46 @@ class UserValidator {
             errors.push(Errors.INVALID_FORMAT(FIELD_NAME));
         }
 
-        const isEmailUsed = await User.findOne({
-            where: {
-                email: email
-            }
-        });
-        console.log(isEmailUsed);
-        if(isEmailUsed) {
-            errors.push(Errors.ALREADY_IN_USE(FIELD_NAME));
+        return errors;
+    }
+
+    static async validateUpdateOne({ id, username, email, password }) {
+        const errors = [
+            ...UserValidator.validateUsername(username),
+            ...UserValidator.validatePassword(password),
+            ...UserValidator.validateEmail(email),
+        ];
+
+        const isUserExists = await UserService.findByPk(id);
+        if (!isUserExists) {
+            errors.push(Errors.USER_DOES_NOT_EXIST(id));
         }
 
         return errors;
     }
 
-    static async validateSaveOne(req) {
-        const { username, email, password } = req.body;
-
-        return [
-            ...await UserValidator.validateUsername(username),
+    static async validateSaveOne({ username, email, password }) {
+        const errors = [
+            ...UserValidator.validateUsername(username),
             ...UserValidator.validatePassword(password),
-            ...await UserValidator.validateEmail(email),
+            ...UserValidator.validateEmail(email),
         ];
+
+        const isEmailUsed = await UserService.findOneByEmail(email);
+        if (isEmailUsed) {
+            errors.push(Errors.ALREADY_IN_USE(UserValidator.FIELDS.EMAIL.FIELD_NAME));
+        }
+
+        const isUsernameUsed = await UserService.findOneByUsername(username);
+        if (isUsernameUsed) {
+            errors.push(Errors.ALREADY_IN_USE(UserValidator.FIELDS.USERNAME.FIELD_NAME));
+        }
+
+        return errors;
     }
 }
 
-export default { validateSaveOne: UserValidator.validateSaveOne };
+export default {
+    validateSaveOne: UserValidator.validateSaveOne,
+    validateUpdateOne: UserValidator.validateUpdateOne,
+};
