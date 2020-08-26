@@ -13,4 +13,5 @@ export default {
     REQUIRE_SPECIAL_CHARACTER: (fieldName) => `${fieldName} require at least 1 special character.`,
     CONTAINS_WHITESPACE_CHARACTER: (fieldName) => `${fieldName} cannot contains any whitespace characters.`,
     INVALID_FORMAT: (fieldName) => `${fieldName} has invalid format.`,
+    ALREADY_IN_USE: (fieldName) => `${fieldName} is already in use.`,
 };

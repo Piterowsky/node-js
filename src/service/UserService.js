@@ -15,7 +15,8 @@ class UserService {
     static async saveOne({ username, password, email }) {
         const pwHash = await bcrypt.hash(password, 12);
         const entity = User.build({ username, pwHash, email });
-        return await entity.save();
+        await entity.save()
+        return { username, password, email };
     }
 
     static async updateOne() {}

@@ -1,4 +1,5 @@
 import Errors from './Errors';
+import User from '../../model/UserModel';
 
 class UserValidator {
     static FIELDS = {
@@ -17,7 +18,7 @@ class UserValidator {
         },
     };
 
-    static validateUsername(username) {
+    static async validateUsername(username) {
         const { FIELD_NAME, MAX, MIN } = UserValidator.FIELDS.USERNAME;
 
         const noContainSpecialCharactersRegex = /^[A-Z]*$/i;
@@ -51,12 +52,20 @@ class UserValidator {
             errors.push(Errors.CONTAINS_WHITESPACES(FIELD_NAME));
         }
 
+        const isUsernameAlreadyUsed = await User.findOne({
+            where: {
+                username: username
+            }
+        });
+        if(isUsernameAlreadyUsed) {
+            errors.push(Errors.ALREADY_IN_USE(FIELD_NAME));
+        }
+
         return errors;
     }
 
     static validatePassword(password) {
         const { FIELD_NAME, MAX, MIN } = UserValidator.FIELDS.PASSWORD;
-
         const containsAtLeastOneBigLetterRegex = /[A-Z]/;
         const containsAtLeastOneSpecialCharacter = /[^\w\s]|_/i;
         const containWhitespaceRegex = /\s/i;
@@ -91,7 +100,7 @@ class UserValidator {
         return errors;
     }
 
-    static validateEmail(email) {
+    static async validateEmail(email) {
         const { FIELD_NAME } = UserValidator.FIELDS.EMAIL;
 
         const emailFormatRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
@@ -107,16 +116,26 @@ class UserValidator {
             errors.push(Errors.INVALID_FORMAT(FIELD_NAME));
         }
 
+        const isEmailUsed = await User.findOne({
+            where: {
+                email: email
+            }
+        });
+        console.log(isEmailUsed);
+        if(isEmailUsed) {
+            errors.push(Errors.ALREADY_IN_USE(FIELD_NAME));
+        }
+
         return errors;
     }
 
-    static validateSaveOne(req) {
+    static async validateSaveOne(req) {
         const { username, email, password } = req.body;
 
         return [
-            ...UserValidator.validateUsername(username),
+            ...await UserValidator.validateUsername(username),
             ...UserValidator.validatePassword(password),
-            ...UserValidator.validateEmail(email),
+            ...await UserValidator.validateEmail(email),
         ];
     }
 }

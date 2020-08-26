@@ -15,8 +15,8 @@ class UserController {
     static async findOne(req, res) {}
 
     static async saveOne(req, res) {
-        console.log(req.body);
-        const errors = UserValidator.validateSaveOne(req);
+        const errors = await UserValidator.validateSaveOne(req);
+        const { username, password, email } = req.body;
         console.warn(errors.length > 0);
         if (errors.length > 0) {
             console.table(errors);
@@ -24,8 +24,9 @@ class UserController {
         }
 
         try {
-            const result = await UserService.saveOne(req.body);
-            return res.end();
+            const newUser = { username, password, email };
+            const result = await UserService.saveOne(newUser);
+            return res.send(result);
         } catch (e) {
             console.error(e);
             return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e);
