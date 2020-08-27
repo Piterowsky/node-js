@@ -1,17 +1,20 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import helmet from 'helmet';
 import { json, urlencoded } from 'body-parser';
+
 import UserRouter from './route/UserRouter';
 import connection from './config/connection';
 import { updateSchema } from './util/schemaUtils';
 import Routes from './routes';
 import SwaggerRouter from './route/SwaggerRouter';
 
+// Main flow function
 (async function () {
     await setupDatabase();
 
-    const app = setupExpress();
+    const app = express();
 
     setupMiddlewares(app);
     setupRoutes(app);
@@ -30,17 +33,12 @@ function setupRoutes(app) {
     app.use(Routes.SWAGGER, SwaggerRouter);
 }
 
-function setupExpress() {
-    const app = express();
-    app.disable('x-powered-by');
-    return app;
-}
-
 function setupMiddlewares(app) {
     app.use(json());
     app.use(urlencoded({ extended: true }));
     app.use(getCors());
     app.use(morgan('dev'));
+    app.use(helmet());
 }
 
 async function testDatabaseConnection() {
